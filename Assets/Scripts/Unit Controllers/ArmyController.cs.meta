@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c8f9d29eabc6e734ebc5599358464fb9
+timeCreated: 1480531441
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - player: {instanceID: 0}
+  - unitSymbol: {fileID: 2800000, guid: cf2b7a4865b537946a79385a536ae83a, type: 3}
+  - armyBody: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

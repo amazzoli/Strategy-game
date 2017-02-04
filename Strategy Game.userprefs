@@ -1,0 +1,23 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Classes\Army.cs">
+    <Files>
+      <File FileName="Assets\Scripts\Unit Controllers\Movement\MovementController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Unit Controllers\Movement\EscapeMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Unit Controllers\Movement\InGameMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Unit Controllers\Movement\BackMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Unit Controllers\Movement\ForwardMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Unit Controllers\AttackController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Unit Controllers\Movement\Movement.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Unit Controllers\Movement\DeploymentMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Unit Controllers\ArmyController.cs" Line="112" Column="4" />
+      <File FileName="Assets\Scripts\Classes\Army.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Static Classes\BattleFunctions.cs" Line="15" Column="2" />
+      <File FileName="Assets\Scripts\Static Classes\CombatFunctions.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
