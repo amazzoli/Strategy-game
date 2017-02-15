@@ -136,7 +136,7 @@ public class TextSpawner : MonoBehaviour
     {
         StopCoroutine(activeCoroutines[0]);
         activeCoroutines.RemoveAt(0);
-        text.gameObject.SetActive(false);
+        //text.gameObject.SetActive(false);
         Destroy(text.gameObject);
     }
 

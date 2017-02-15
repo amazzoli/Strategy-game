@@ -12,6 +12,7 @@ public class BattleData: MonoBehaviour {
 	public List<DeploymentStats> armyList = new List<DeploymentStats> (); // -- List of the army stat to instantiate
 
 
+
 	void Start() {
 		//DontDestroyOnLoad (	);
 	}

@@ -51,9 +51,9 @@ public class InGameMovement : Movement
         armyBody = armyT.GetChild(0).GetComponent<Body>();
         diagonal = Mathf.Sqrt(Mathf.Pow(armyBody.width, 2) + Mathf.Pow(armyBody.length, 2));
 
-        Transform descPanel = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Description Panel");
-        descPanel.GetComponent<DescriptionPanel>().SetMovementPanel(movement);
-        SetTexts(descPanel.gameObject);
+        MovPanel movPanel = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Description Panels").GetChild(0).GetComponent<MovPanel>();
+        movPanel.MakePanel(movement);
+        SetTexts(movPanel);
 
         movConstructed = true;
     }
@@ -154,12 +154,12 @@ public class InGameMovement : Movement
     }
 
 
-    protected virtual void SetTexts(GameObject panel)
+    protected virtual void SetTexts(MovPanel panel)
     {
-        strMovText = panel.transform.GetChild(0).transform.GetChild(0).GetComponent<Text>();
-        rotMovText = panel.transform.GetChild(0).transform.GetChild(1).GetComponent<Text>();
-        movDone = panel.transform.GetChild(0).transform.GetChild(2).GetComponent<Text>();
-        movLeftText = panel.transform.GetChild(0).transform.GetChild(3).GetComponent<Text>();
+        strMovText = panel.straightMov;
+        rotMovText = panel.rotationMov;
+        movDone = panel.movDone;
+        movLeftText = panel.movLeft;
     }
 
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public delegate void PlayerDlg(Player player);
 public delegate void ArmyControllerDlg(ArmyController armyCtrl);
+public delegate void ArmyControllersDlg(List<ArmyController> armyCtrl);
 public delegate void BaseDlg();
 
 

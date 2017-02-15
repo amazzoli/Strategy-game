@@ -2,99 +2,108 @@
 using System.Collections.Generic;
 using System.Collections;
 
-public class Skill
-{
 
-    public bool atDistance, inCombat;
-    public string name, description;
+/// <summary>
+/// Base class for skills storing the most general skill information and logic.
+/// </summary>
+public abstract class Skill
+{
+    // PUBLIC VARS
+
+    /// <summary>If the skill can be casted outside the melee combat</summary>
+    public bool atDistance;
+
+    /// <summary>If the skill can be casted during the melee combat</summary>
+    public bool inCombat;
+
+    /// <summary>Skill name</summary>
+    public string name;
+
+    /// <summary>Skill description. Must contain all the essential information</summary>
+    public string description;
+
+    /// <summary>Skill caster</summary>
+    public ArmyController caster;
+
+
+    // PRTECTED VARS
 
     protected int energyCost;
-    protected ArmyController caster;
-    protected DescriptionPanel descPanel;
+    protected DescPanels descPanels;
     protected ErrorPanel errorPanel;
 
 
-    public virtual void InitSkill(ArmyController caster)
+    // SKILL METHODS
+
+    /// <summary>
+    /// The skill starts with this method, where the caster and the panels are initialized, and there is a check if the skill can
+    /// be casted. The actual action is implemented in the abstract function StartSkill()
+    /// </summary>
+    public void InitSkill(ArmyController caster)
     {
         this.caster = caster;
-        if (descPanel == null)
-            descPanel = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Description Panel").GetComponent<DescriptionPanel>();
+        if (descPanels == null)
+            descPanels = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Description Panels").GetComponent<DescPanels>();
         if (errorPanel == null)
             errorPanel = GameObject.FindGameObjectWithTag("Turn Panel").transform.GetChild(2).GetComponent<ErrorPanel>();
+
+        if (IsCastable())
+        {
+            GameController.ResetAction();
+            GameController.ResetAction += ResetSkill;
+            GameController.actionInProg = true;
+            StartSkill();
+        }
+    }
+
+
+    /// <summary>Abstract method for the skill implementation</summary>
+    protected abstract void StartSkill();
+
+
+    /// <summary>
+    /// Generic conditions for the skill castability: if the unit has already casted a skill and if the energy is sufficient.
+    /// Other specific conditions can be set in the virtual method OtherCastablilityConditions()
+    /// </summary>
+    bool IsCastable()
+    {
         if (caster.skillUsed)
         {
             errorPanel.LaunchErrorText("Skill already used");
-            return;
+            return false;
         }
         if (caster.army.energy < energyCost)
         {
             errorPanel.LaunchErrorText("Not enough energy left");
-            return;
+            return false;
         }
-        GameController.ResetAction();
-        GameController.ResetAction += ResetSkill;
-        GameController.actionInProg = true;
+        return OtherCastablilityConditions();
     }
 
+
+    /// <summary>Specific skill castability conditions</summary>
+    protected virtual bool OtherCastablilityConditions() { return true; }
+
+
+    /// <summary>
+    /// Reset the skill without concluding it. The method is called typically by the GameController delegate ResetAction, 
+    /// launched at the beginning of other actions or to specific key inputs. It's virtual and can be extended in the childs.
+    /// </summary>
     protected virtual void ResetSkill()
     {
         GameController.ResetAction -= ResetSkill;
-        descPanel.HidePanel(null);
+        descPanels.HidePanel(null);
     }
 
+
+    /// <summary>
+    /// Skill conclusion. It's virtual and can be extended in the childs.
+    /// </summary>
     protected virtual void EndSkill()
     {
         GameController.ResetAction -= ResetSkill;
         GameController.actionInProg = false;
         caster.SetEnergyConsuption(energyCost);
+        caster.skillUsed = true;
     }
-}
-
-
-public abstract class OneTargetSkill : Skill
-{
-    protected ArmyController target;
-
-
-    public abstract void UseSkill(ArmyController target);
-}
-
-
-public abstract class AOESkill : Skill
-{
-    protected List<ArmyController> targets;
-    protected AOEArea area;
-    protected float extAreaRadius = 5, internalAreaRadius = 2.5f;
-    Coroutine areaMovement;
-
-
-    public override void InitSkill(ArmyController caster)
-    {
-        base.InitSkill(caster);
-        AOEArea areaModel = GameObject.FindGameObjectWithTag("GameController").GetComponent<Resources>().area;
-        area = GameObject.Instantiate(areaModel, new Vector3(0.0f, 0.03f, 0.0f), Quaternion.identity);
-        area.externalRadius = extAreaRadius;
-        area.internalRadiusProportion = internalAreaRadius / extAreaRadius;
-        area.StartMyMovement();
-    }
-
-
-    public abstract void UseSkill(List<ArmyController> targets);
-
-
-    protected override void ResetSkill()
-    {
-        base.ResetSkill();
-        area.StartMyMovement();
-        GameObject.Destroy(area.gameObject);
-    }
-
-
-    protected override void EndSkill()
-    {
-        base.ResetSkill();
-        area.StartMyMovement();
-        GameObject.Destroy(area.gameObject);
-    }
-
 }

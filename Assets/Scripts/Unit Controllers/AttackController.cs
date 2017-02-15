@@ -14,7 +14,7 @@ public class AttackController : MonoBehaviour
 
     ErrorPanel errorPanel;
     ActionPanel actionPanel;
-    DescriptionPanel descriptionPanel;
+    DescPanels descPanels;
     FieldOfView fieldOfView; // Class which casts and controls the army field of view
     AuxCollider auxCollider, enemyCollider; // Auxiliary colliders for the detection of obstacles during the approach
     ArmyController armyCtrl, defender;
@@ -35,7 +35,7 @@ public class AttackController : MonoBehaviour
         armyCtrl = GetComponent<ArmyController>();
         auxCollider = transform.GetChild(1).GetComponent<AuxCollider>();
         errorPanel = GameObject.FindGameObjectWithTag("Turn Panel").transform.GetChild(2).GetComponent<ErrorPanel>();
-        descriptionPanel = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Description Panel").GetComponent<DescriptionPanel>();
+        descPanels = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Description Panels").GetComponent<DescPanels>();
     }
 
 
@@ -76,7 +76,7 @@ public class AttackController : MonoBehaviour
                 army.armyCtrl.body.MarkAsAttackable(armyCtrl, Attack, true);
                 enemiesInSight.Add(army.armyCtrl);
             }
-        descriptionPanel.SetArmyChioce(enemiesInSight, Attack);
+        descPanels.choicePanel.MakePanel(enemiesInSight, Attack);
     }
 
     /// <summary> 
@@ -87,7 +87,6 @@ public class AttackController : MonoBehaviour
     /// In order to work, the aux colliders needs at least that one frame lasts, attacking true makes that possible.
     /// After this time the CheckAndAtack method is called.
     /// </summary>
-    /// <param name="index"> Index of the defender in the armiesInSight list </param>
     public void Attack(ArmyController defender)
     {
         if (!enemiesInSight.Contains(defender))
@@ -197,7 +196,7 @@ public class AttackController : MonoBehaviour
                 seenArmy.armyCtrl.body.UnmarkAsAttackable();
             }
             fieldOfView.DestroyArea();
-            descriptionPanel.HidePanel(null);
+            descPanels.HidePanel(null);
         }
     }
 

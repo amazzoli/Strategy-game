@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy-game", "Strategy-game.csproj", "{983E2D0D-A825-EA24-413E-DD446F4E74B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy-game.Editor", "Strategy-game.Editor.csproj", "{9C30F2E5-4B58-574F-5534-88223A16FA64}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{983E2D0D-A825-EA24-413E-DD446F4E74B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{983E2D0D-A825-EA24-413E-DD446F4E74B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{983E2D0D-A825-EA24-413E-DD446F4E74B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{983E2D0D-A825-EA24-413E-DD446F4E74B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C30F2E5-4B58-574F-5534-88223A16FA64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C30F2E5-4B58-574F-5534-88223A16FA64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C30F2E5-4B58-574F-5534-88223A16FA64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C30F2E5-4B58-574F-5534-88223A16FA64}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

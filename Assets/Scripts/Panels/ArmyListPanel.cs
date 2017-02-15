@@ -43,7 +43,7 @@ public class ArmyListPanel : MonoBehaviour {
 	void AddButton (ArmyController army, int i, float buttonHeight) {
 		Button newButton = (Button)Instantiate(armyButton, Vector3.zero, Quaternion.identity);
 		RectTransform rTrans = newButton.GetComponent<RectTransform> ();
-		SetButtonColors (newButton, army);
+		PanelF.SetButtonColors (newButton, army);
 		newButton.transform.SetParent(transform);
 		rTrans.anchoredPosition = new Vector2 (0, - topSpace - i * (buttonHeight + offsetBtwButt));
 		newButton.GetComponentInChildren<Text>().text = army.army.unitName;
@@ -62,29 +62,16 @@ public class ArmyListPanel : MonoBehaviour {
 	void HidePanel(Action action){
 		if (action == Action.nothing) gameObject.SetActive (true);
 		else gameObject.SetActive (false);
-	}	
-
-
-	void DeleteCurrentButtons () {
-		foreach (Button butt in myButtons) {
-			butt.onClick.RemoveAllListeners ();
-			Destroy (butt.gameObject);
-		}
-		myButtons.Clear ();
 	}
 
 
-	void SetButtonColors(Button newButton, ArmyController armyCtrl) {
-		Color color = armyCtrl.player.color;
-		ColorBlock cb = newButton.colors;
-		cb.normalColor = color;
-		cb.highlightedColor = color;
-		cb.disabledColor = color;
-		color.a = 0.7f;
-		cb.pressedColor = color;
-		newButton.colors = cb;
-		Color textColor = Color.black;
-		if (color.b + color.g + color.r < 1.5f) textColor = Color.white;
-		newButton.transform.GetChild (0).GetComponent<Text> ().color = textColor;
-	}
+    void DeleteCurrentButtons()
+    {
+        foreach (Button butt in myButtons)
+        {
+            butt.onClick.RemoveAllListeners();
+            Destroy(butt.gameObject);
+        }
+        myButtons.Clear();
+    }
 }

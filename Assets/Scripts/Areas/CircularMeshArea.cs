@@ -11,7 +11,7 @@ public class CircularMeshArea {
 	protected float spannedAngle;
 	protected List<Vector3> areaPoints = new List<Vector3>(); // Boundary of the area
 	protected List<float> areaRadius = new List<float>(); // --- Length of the rays from the center
-	protected Vector3 center;
+	public Vector3 center { get; protected set; }
 	protected GameObject areaGO; // ---------------------------- GO to instantiate. The material must be attached 
 	protected bool completeCircle; // -------------------------- If the shape spans a 360 angle
 	Mesh movAreaMesh;

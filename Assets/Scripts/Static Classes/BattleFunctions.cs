@@ -107,6 +107,8 @@ public static class BattleF
     /// <returns>Damage</returns>
     public static float GetMoraleDamage(float damage, float defenderMentalStrength)
     {
+        if (damage <= 0)
+            return 0;
         float k = Mathf.Log(9) / 4.0f; // such that a difference (att - def) of 4 has hit prob = 9/10
         return 1.0f / (1.0f + Mathf.Exp(-k * (damage - defenderMentalStrength - 4)));
     }
@@ -124,5 +126,16 @@ public static class BattleF
             if (Random.value < probability)
                 count++;
         return count;
+    }
+
+    /// <summary>
+    /// Generate the precision of a distance skill which decreases with the distance
+    /// </summary>
+    /// <param name="maxPrecision">Precision at 0 distance</param>
+    /// <param name="distance">Dinstance of the target, in world units</param>
+    public static float ComputePrecision(float maxPrecision, float distance)
+    {
+        float reductionFactor = 0.01f;
+        return maxPrecision - distance * reductionFactor;
     }
 }

@@ -20,8 +20,8 @@ public class MovementController : MonoBehaviour
     Movement movement;
     ArmyController armyCtrl;
     ErrorPanel errorPanel;
-    DescriptionPanel descrPanel;
     ActionPanel actionPanel;
+    DescPanels descPanels;
     int nOverlapsOnMe = 0;
 
 
@@ -37,8 +37,8 @@ public class MovementController : MonoBehaviour
     {
         armyCtrl = transform.parent.GetComponent<ArmyController>();
         errorPanel = GameObject.FindGameObjectWithTag("Turn Panel").transform.GetChild(2).GetComponent<ErrorPanel>();
-        descrPanel = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Description Panel").GetComponent<DescriptionPanel>();
         actionPanel = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Action Panel").GetComponent<ActionPanel>();
+        descPanels = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Description Panels").GetComponent<DescPanels>();
 
         movement = new DeploymentMovement(transform.parent.transform);
     }
@@ -86,7 +86,7 @@ public class MovementController : MonoBehaviour
             if (freeSides.Count == 1)
                 StartEscape(freeSides[0]);
             else
-                descrPanel.SetDirectionChioce(freeSides, StartEscape, "Choose the escape direction:", 2);
+                descPanels.choicePanel.MakePanel(freeSides, StartEscape, "Choose the escape direction:");
         }
     }
 
@@ -151,6 +151,7 @@ public class MovementController : MonoBehaviour
         {
             movement.movConstructed = false;
             StopAllCoroutines();
+            descPanels.HidePanel(null);
             movement.ResetMovement();
             movActive = false;
         }

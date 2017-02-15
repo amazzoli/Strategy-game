@@ -37,6 +37,7 @@ public class DeploymentPanel : MonoBehaviour {
 		newButton.onClick.AddListener(() => dpl.addArmy(army));
 		newButton.GetComponentInChildren<Text>().text = army.myName;
 		newButton.transform.GetChild(1).GetComponent<Image> ().overrideSprite = textures.GetSprite(army.myClass);
+        PanelF.SetButtonColors(newButton, army.player.color);
 	}
 
 

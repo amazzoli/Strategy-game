@@ -8,25 +8,31 @@ public class UIInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 	public string title;
 	public string infoText;
 	public float secondsToWait;
+    public bool show = true;
 	InfoPanel infoPanel;
 	bool isPanelActive = false;
+
 
 	public void Start () {
 		if (infoPanel == null)
 			infoPanel = GameObject.FindGameObjectWithTag ("Info Panel").GetComponent<InfoPanel> ();
-	}
+        show = true;
+    }
 
 
 	public void OnPointerEnter (PointerEventData eventData) {
-		StartCoroutine (WaitCoroutine());
-		//infoPanel.MakePanel (GetComponent<RectTransform> (), title, infoText, onTheRight, topDown);
+        if (show)
+            StartCoroutine(WaitCoroutine());
 	}
 
 
 	public void OnPointerExit (PointerEventData eventData) {
-		StopAllCoroutines();
-		infoPanel.HidePanel ();
-		isPanelActive = false;
+        if (show)
+        {
+            StopAllCoroutines();
+            infoPanel.HidePanel();
+            isPanelActive = false;
+        }
 	}
 
 

@@ -174,21 +174,28 @@ public class ArmyController : MonoBehaviour
     }
 
 
-    public void AddStatModifier(List<Stat> stats, List<float> values, int nTurns, string title, ArmyController caster)
+    public void AddStatModifier(StatModifier newMod, ArmyController caster)
     {
         bool modPresent = false;
-        StatModifier newMod = new StatModifier(stats, values, nTurns, title);
         foreach (StatModifier statMod in army.statMods)
-            if (statMod.title == title)
+            if (statMod.title == newMod.title)
             {
-                statMod.turnsLeft += (nTurns - 1);
+                statMod.turnsLeft += (newMod.turnsLeft - 1);
                 modPresent = true;
             }
         if (!modPresent)
             army.statMods.Add(newMod);
         GameController.battleLog.Add(new StatModActionLog(caster, this, newMod));
         textSpawner.SpawnNewStatModifier(newMod, this);
-        statPanel.MakePanel(this);
+        if (caster == this)
+            statPanel.MakePanel(this);
+    }
+
+
+    public void AddStatModifier(List<Stat> stats, List<float> values, int nTurns, string title, ArmyController caster)
+    {
+        StatModifier newMod = new StatModifier(stats, values, nTurns, title);
+        AddStatModifier(newMod, caster);
     }
 
 

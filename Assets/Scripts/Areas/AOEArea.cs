@@ -4,67 +4,65 @@ using UnityEngine;
 
 public class AOEArea : MonoBehaviour {
 
-    GameObject internalArea;
-    Coroutine myMovement;
+    public AOESubArea subAreaPrefab;
+    // Sub areas in decreasing order of radius!
+    public List<AOESubArea> subAreas = new List<AOESubArea>();
+    GameObject cylinder;
+    public FieldOfView field;
+    public delegate bool MoveCondition(AOEArea area);
+    ErrorPanel errorPanel;
 
-    public float externalRadius
+
+    public void MakeArea(int nSubAreas, float maxRadius)
     {
-        get { return transform.localScale.x / 2.0f; }
-        set { transform.localScale = new Vector3(value * 2, 0.01f, value * 2); }
-    }
-    
-
-    public float internalRadiusProportion
-    {
-        get
+        errorPanel = GameObject.FindGameObjectWithTag("Turn Panel").transform.GetChild(2).GetComponent<ErrorPanel>();
+        for (int i=0; i<nSubAreas; i++)
         {
-            if (internalArea == null)
-                internalArea = transform.GetChild(0).gameObject;
-            return internalArea.transform.localScale.x;
-        }
-        set
-        {
-            if (internalArea == null)
-                internalArea = transform.GetChild(0).gameObject;
-
-            if (value < 0 )
-                internalArea.transform.localScale = new Vector3(0, 0, 0);
-            if (value > 1)
-                internalArea.transform.localScale = new Vector3(1, 1, 1);
-            else
-                internalArea.transform.localScale = new Vector3(value, 1, value);
+            cylinder = transform.GetChild(0).gameObject;
+            AOESubArea newArea = Instantiate(subAreaPrefab, Vector3.zero, Quaternion.identity);
+            newArea.transform.SetParent(this.transform);
+            newArea.transform.localPosition = Vector3.zero;
+            newArea.radius = maxRadius * (1 - i / (float)nSubAreas);
+            newArea.GetComponent<MeshRenderer>().material.renderQueue = 3105 + i;
+            subAreas.Add(newArea);
         }
     }
 
 
-    private void Start()
+    public void StartMyMovement(ArmyControllersDlg methodOverArmies, MoveCondition condition, string errorMessage)
     {
-        if (internalArea == null)
-            internalArea = transform.GetChild(0).gameObject;
-        GetComponent<MeshRenderer>().material.renderQueue = 3101;
-        internalArea.GetComponent<MeshRenderer>().material.renderQueue = 3102;
-    }
-
-
-    public void StartMyMovement()
-    {
-        myMovement = StartCoroutine(MyMovement());
+        StartCoroutine(MyMovement(methodOverArmies, condition, errorMessage));
     }
 
 
     public void StopMyMovement()
     {
-        StopCoroutine(myMovement);
+        StopAllCoroutines();
     }
 
 
-    IEnumerator MyMovement()
+    public List<ArmyController> GetOverlappedArmies(int subAreaIndex)
     {
+        return subAreas[subAreaIndex].GetComponent<AOESubArea>().overlappedArmies;
+    }
+
+
+    IEnumerator MyMovement(ArmyControllersDlg methodOverArmies, MoveCondition condition, string errorMessage)
+    {
+        yield return new WaitForSeconds(2 * Time.deltaTime);
         while (true)
         {
             Vector3 mouseScreenToWorld = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10));
             Vector3 mousePosition = GeomF.ToYPlane(mouseScreenToWorld, Camera.main.transform.position, 0.05f);
             transform.position = mousePosition;
+            if (Input.GetButtonDown("Fire1"))
+            {
+                if (condition(this))
+                    methodOverArmies(GetOverlappedArmies(0));
+                else
+                    errorPanel.LaunchErrorText(errorMessage);
+            }
+            cylinder.SetActive(condition(this));
             yield return null;
         }
     }
