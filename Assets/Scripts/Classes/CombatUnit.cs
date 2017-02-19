@@ -8,8 +8,8 @@ using System.Collections.Generic;
 /// </summary>
 public class CombatUnit
 {
-
     // STATS
+
     float baseMovement, baseInitiative, basePrecision, basePhAtt, basePhDef, baseElemDef, baseMentalDef;
     int baseAttNumber, baseWoundsNumber;
 
@@ -68,17 +68,12 @@ public class CombatUnit
         }
     }
 
-    /// <summary> Elemental defense. Defends against elemental and magical attacks </summary>
-    public float elemDef
+    /// <summary> Neutral elemental defense without applying weaknesses or resistences. 
+    /// Defends against elemental and magical attacks </summary>
+    public float neutralElemDef
     {
-        protected set { baseElemDef = value; }
-        get
-        {
-            if ((baseElemDef + GetStatModification(Stat.elemDef)) < 0)
-                return 0;
-            else
-                return baseElemDef + GetStatModification(Stat.elemDef);
-        }
+        set { baseElemDef = value; }
+        get { return baseElemDef; }
     }
 
     /// <summary> Mental defense. Defends against phycic attack, typically acting on the unit morale </summary>
@@ -102,8 +97,8 @@ public class CombatUnit
         {
             if ((basePrecision + GetStatModification(Stat.precision)) < 0)
                 return 0;
-            if ((basePrecision + GetStatModification(Stat.precision)) > 1)
-                return 1;
+            if ((basePrecision + GetStatModification(Stat.precision)) > 100)
+                return 100;
             else
                 return basePrecision + GetStatModification(Stat.precision);
         }
@@ -135,10 +130,14 @@ public class CombatUnit
         }
     }
 
+
     // OTHER UNIT INFORMATION
+
     public string unitName;
     public string description;
-    public Factions faction;
+    public Faction faction;
+    public List<Element> elemResistence = new List<Element>();
+    public List<Element> elemWeakness = new List<Element>();
     public List<Skill> skills = new List<Skill>();
     public List<StatModifier> statMods = new List<StatModifier>();
     public float heightWidthRatio;
@@ -157,6 +156,16 @@ public class CombatUnit
         return modification;
     }
 
+    /// <summary>Elemental defense of a specific element considering weaknesses and resistences</summary>
+    public float elemDef(Element element)
+    {
+        if (elemWeakness.Contains(element))
+            return neutralElemDef / 2.0f;
+        else if (elemResistence.Contains(element))
+            return neutralElemDef * 2;
+        else
+            return neutralElemDef;
+    }
 }
 
 

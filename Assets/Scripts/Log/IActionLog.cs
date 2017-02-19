@@ -83,7 +83,14 @@ public struct StatModText
                 myText = "+ ";
             else
                 myText = "- ";
-            myText += "<b>" + Mathf.Abs(modification).ToString("0.0") + " <i>" + StatToString(stat) + "</i></b>";
+            if (stat == Stat.attNumber || stat == Stat.woundsNumber)
+                myText += "<b>" + Mathf.Abs(modification) + " <i>" + StatToString(stat) + "</i></b>";
+            else if (stat == Stat.movement)
+                myText += "<b>" + Mathf.Abs(modification).ToString("0.#") + " <i>" + StatToString(stat) + "</i></b>";
+            else if (stat == Stat.precision)
+                myText += "<b>" + Mathf.Abs(modification).ToString("0.#") + "% <i>" + StatToString(stat) + "</i></b>";
+            else
+                myText += "<b>" + Mathf.Abs(modification).ToString("0.##") + " <i>" + StatToString(stat) + "</i></b>";
             return myText;
         }
     }

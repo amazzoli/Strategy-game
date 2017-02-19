@@ -135,7 +135,11 @@ public static class BattleF
     /// <param name="distance">Dinstance of the target, in world units</param>
     public static float ComputePrecision(float maxPrecision, float distance)
     {
-        float reductionFactor = 0.01f;
-        return maxPrecision - distance * reductionFactor;
+        float reductionFactor = 1;
+        float precision = maxPrecision - distance * reductionFactor;
+        if (precision < 0)
+            return 0;
+        else
+            return precision;
     }
 }

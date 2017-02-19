@@ -24,7 +24,7 @@ public class ArmyController : MonoBehaviour
     public Army army;
 
     /// <summary> Class of the hero in the army. </summary>
-    public Hero hero;
+    public CombatUnit hero;
 
     /// <summary> Army symbol related to the army class (Sprite for the panels) </summary>
     public Sprite spriteSymbol;
@@ -72,7 +72,7 @@ public class ArmyController : MonoBehaviour
         transform.GetChild(5).GetComponent<FlagColors>().SetFlag(textureSymbol);
         startUnitSize = army.nSoldiers;
         startEnergy = army.energy;
-        if (hero != null) startUnitSize += hero.nWounds;
+        if (hero != null) startUnitSize += hero.woundsNumber;
     }
 
 

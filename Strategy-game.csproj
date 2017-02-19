@@ -86,7 +86,6 @@
     <Compile Include="Assets\Scripts\Classes\BurigliaUnits.cs" />
     <Compile Include="Assets\Scripts\Classes\CombatStats.cs" />
     <Compile Include="Assets\Scripts\Classes\CombatUnit.cs" />
-    <Compile Include="Assets\Scripts\Classes\Hero.cs" />
     <Compile Include="Assets\Scripts\Deployment.cs" />
     <Compile Include="Assets\Scripts\DeploymentArea.cs" />
     <Compile Include="Assets\Scripts\DeploymentStats.cs" />
@@ -119,7 +118,7 @@
     <Compile Include="Assets\Scripts\SelectionController.cs" />
     <Compile Include="Assets\Scripts\Skills\AOEDamageSkill.cs" />
     <Compile Include="Assets\Scripts\Skills\Buriglia Skills\Bazooking.cs" />
-    <Compile Include="Assets\Scripts\Skills\Buriglia Skills\SteamBomb.cs" />
+    <Compile Include="Assets\Scripts\Skills\Buriglia Skills\BubbleCannon.cs" />
     <Compile Include="Assets\Scripts\Skills\Buriglia Skills\WallOfShields.cs" />
     <Compile Include="Assets\Scripts\Skills\DamageSkill.cs" />
     <Compile Include="Assets\Scripts\Skills\MeleeAttack.cs" />

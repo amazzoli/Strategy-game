@@ -25,7 +25,7 @@ public class TextSpawner : MonoBehaviour
 
     public void SpawnMoraleDamage(float damage, ArmyController army)
     {
-        string text = "- " + (damage * 100).ToString("0") + "% morale";
+        string text = "- " + (damage * 100).ToString("0.#") + "% morale";
         Coroutine textAnimation = StartCoroutine(TextAnimation(army.transform.position, Color.blue, text));
         activeCoroutines.Add(textAnimation);
     }
@@ -33,7 +33,7 @@ public class TextSpawner : MonoBehaviour
 
     public void SpawnWoundDamage(int damage, ArmyController army)
     {
-        string text = "- " + damage.ToString("0") + " wounds";
+        string text = "- " + damage + " wounds";
         Coroutine textAnimation = StartCoroutine(TextAnimation(army.transform.position, Color.magenta, text));
         activeCoroutines.Add(textAnimation);
     }
@@ -50,7 +50,7 @@ public class TextSpawner : MonoBehaviour
 
     public void SpawnMovementReduction(float value, ArmyController army)
     {
-        string text = "- " + value.ToString("0.0") + " <i>movement</i>";
+        string text = "- " + value.ToString("0.#") + " <i>movement</i>";
         Color orange = new Color(84f / 255f, 40f / 255f, 28f / 255f);
         Coroutine textAnimation = StartCoroutine(TextAnimation(army.transform.position, orange, text));
         activeCoroutines.Add(textAnimation);

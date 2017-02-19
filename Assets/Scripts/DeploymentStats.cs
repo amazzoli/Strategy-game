@@ -8,6 +8,6 @@ public class DeploymentStats {
 	public string myName;
 	public int nSoldiers;
 	[HideInInspector] public bool isInstatiated = false;
-	public Classes myClass ;
+	public Class myClass ;
 
 }

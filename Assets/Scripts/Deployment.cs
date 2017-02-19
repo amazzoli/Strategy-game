@@ -135,27 +135,27 @@ public class Deployment
     }
 
 
-    void SetArmyClass(GameObject army, Classes aClass)
+    void SetArmyClass(GameObject army, Class aClass)
     {
-        if (aClass == Classes.Lancers)
+        if (aClass == Class.Lancers)
         {
             army.GetComponent<ArmyController>().army = new Lancers();
             army.GetComponent<ArmyController>().spriteSymbol = data.textures.lancerSprite;
             army.GetComponent<ArmyController>().textureSymbol = data.textures.lancerTexture;
         }
-        if (aClass == Classes.Macers)
+        if (aClass == Class.Macers)
         {
             army.GetComponent<ArmyController>().army = new Macers();
             army.GetComponent<ArmyController>().spriteSymbol = data.textures.macerSprite;
             army.GetComponent<ArmyController>().textureSymbol = data.textures.macerTexture;
         }
-        if (aClass == Classes.Shellfighters)
+        if (aClass == Class.Shellfighters)
         {
             army.GetComponent<ArmyController>().army = new Shellfighters();
             army.GetComponent<ArmyController>().spriteSymbol = data.textures.shellfighterSprite;
             army.GetComponent<ArmyController>().textureSymbol = data.textures.shellfighterTexture;
         }
-        if (aClass == Classes.Spongezookers)
+        if (aClass == Class.Spongezookers)
         {
             army.GetComponent<ArmyController>().army = new Spongezookers();
             army.GetComponent<ArmyController>().spriteSymbol = data.textures.spongezookerSprite;

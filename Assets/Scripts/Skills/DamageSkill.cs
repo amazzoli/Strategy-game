@@ -10,9 +10,6 @@ public abstract class DamageSkill : Skill
 {
     // PUBLIC VARS
 
-    /// <summary>If the random generation of the hits on mark has been already performed</summary>
-    public bool hitsGenerated = false;
-
     /// <summary>List of the targets</summary>
     public List<ArmyController> targets = new List<ArmyController>();
 
@@ -49,14 +46,7 @@ public abstract class DamageSkill : Skill
     /// </summary>
     protected override void StartSkill()
     {
-        if (hitsGenerated)
-        {
-            foreach (ArmyController target in targets)
-                target.body.GetComponent<Renderer>().material.color = Color.red;
-            descPanels.damagePanel.MakePanel(this);
-        }
-        else
-            TargetChoice();
+        TargetChoice();
     }
 
 
@@ -101,50 +91,33 @@ public abstract class DamageSkill : Skill
     protected abstract void ResetTargetChoice();
 
 
-    /// <summary>Method called by the damage panel for the random generation of the hits</summary>
-    public void GenerateHits()
-    {
-        hitsGenerated = true;
-        for (int i = 0; i < targets.Count; i++)
-        {
-            nHitsOnMarks.Add(BattleF.GetSuccessfulEvents(nHits[i], precision[i]));
-            descPanels.damagePanel.UpdateTextsAfterHits(this, i);
-        }
-    }
-
-
     /// <summary>
     /// Method called by the damage panel for the random generation of the wounds, applying all the skill effects 
     /// and concluding the skill.
     /// </summary>
-    public void GenerateWounds()
+    public void GenerateHitsAndWounds()
     {
-        if (hitsGenerated)
+        EndSkill();
+        for (int i = 0; i < targets.Count; i++)
         {
-            EndSkill();
-            for (int i = 0; i < targets.Count; i++)
-            {
-                if (statMods[i] != null)
-                    targets[i].AddStatModifier(statMods[i], caster);
-                nWound.Add(BattleF.GetSuccessfulEvents(nHitsOnMarks[i], damageProb[i]));
-                targets[i].SetWoundDamage(nWound[i], caster, name);
-                targets[i].body.GetComponent<Renderer>().material.color = Color.white;
-                descPanels.damagePanel.UpdateTextsAfterWounds(this, i);
-            }
-            hitsGenerated = false;
-
-            targets.Clear();
-            precision.Clear();
-            attack.Clear();
-            defense.Clear();
-            damageProb.Clear();
-            nHits.Clear();
-            nHitsOnMarks.Clear();
-            nWound.Clear();
-            statMods.Clear();
+            nHitsOnMarks.Add(BattleF.GetSuccessfulEvents(nHits[i], precision[i] * 0.01f));
+            nWound.Add(BattleF.GetSuccessfulEvents(nHitsOnMarks[i], damageProb[i]));
+            targets[i].SetWoundDamage(nWound[i], caster, name);
+            targets[i].body.GetComponent<Renderer>().material.color = Color.white;
+            descPanels.damagePanel.UpdateTextsAfterWounds(this, i);
+            if (statMods.Count > 0 && statMods[i] != null)
+                targets[i].AddStatModifier(statMods[i], caster);
         }
-        else
-            errorPanel.LaunchErrorText("Generate the hits on mark first");
+
+        targets.Clear();
+        precision.Clear();
+        attack.Clear();
+        defense.Clear();
+        damageProb.Clear();
+        nHits.Clear();
+        nHitsOnMarks.Clear();
+        nWound.Clear();
+        statMods.Clear();
     }
 
 
@@ -157,20 +130,17 @@ public abstract class DamageSkill : Skill
     }
 
 
-    // PROPERTIES FOR THE UIINFO TEXT IN THE DAMAGE PANEL
+    //// PROPERTIES FOR THE UIINFO TEXT IN THE DAMAGE PANEL
 
     /// <summary> Description of the skill hits on mark generation.</summary>
     /// <param name="index">Target index.</param>
     public virtual string HitsInfo(int index)
     {
         string text = hitsGenerationText + " <b>" + nHits[index] + "</b>\n";
-        text += precisionText + " <b>" + precision[index].ToString("0.00") + "</b>\n";
-        text += "Expected hits on mark: <b>" + Mathf.RoundToInt(precision[index] * nHits[index]) + "</b>";
-        if (hitsGenerated)
-        {
-            string hexColor = OtherF.RGBToHex(descPanels.damagePanel.hitsColor);
-            text += "\n<color=#" + hexColor + ">Actual hits on mark: <b>" + nHitsOnMarks[index] + "</b></color>";
-        }
+        text += precisionText + " <b>" + precision[index].ToString("0.#") + "%</b>\n";
+        text += "<i>Expected hits on mark: <b>" + Mathf.RoundToInt(precision[index] * 0.01f * nHits[index]) + "</b></i>";
+        string hexColor = OtherF.RGBToHex(descPanels.damagePanel.hitsColor);
+        text += "\n<color=#" + hexColor + ">Actual hits on mark: <b>" + nHitsOnMarks[index] + "</b></color>";
         return text;
     }
 
@@ -181,22 +151,32 @@ public abstract class DamageSkill : Skill
     {
         string text;
         string hexHitsColor = OtherF.RGBToHex(descPanels.damagePanel.hitsColor);
-        if (hitsGenerated)
-            text = "<color=#" + hexHitsColor + ">N hits on mark: <b>" + nHitsOnMarks[index] + "</b></color>\n";
-        else
-            text = "<color=#" + hexHitsColor + ">N hits on mark: <i>not generated yet</i></color>\n";
-        text += attackStrengthText + " <b>" + attack[index] + "</b>\n";
-        text += defenseText + " <b>" + defense[index] + "</b>\n";
-        text += "Damage probability: <b>" + damageProb[0].ToString("0.00") + "</b>";
-        if (hitsGenerated || caster.skillUsed)
-            text += "\nExpected number of wounds: <b>" + Mathf.RoundToInt(nHitsOnMarks[index] * damageProb[index]) + "</b>";
-        if (caster.skillUsed)
-        {
-            string hexColor = OtherF.RGBToHex(descPanels.damagePanel.woundColor);
-            text += "\n<color=#" + hexColor + ">Actual number of wounds: <b>" + nWound[index] + "</b></color>";
-        }
+        text = "<color=#" + hexHitsColor + ">N hits on mark: <b>" + nHitsOnMarks[index] + "</b></color>\n";
+        text += attackStrengthText + " <b>" + attack[index].ToString("0.##") + "</b>\n";
+        text += defenseText + " <b>" + defense[index].ToString("0.##") + "</b>\n";
+        text += "Damage probability: <b>" + damageProb[index].ToString("0.##") + "</b>\n";
+        text += "<i>Expected number of wounds: <b>" + Mathf.RoundToInt(nHitsOnMarks[index] * damageProb[index]) + "</b></i>";
+        string hexColor = OtherF.RGBToHex(descPanels.damagePanel.woundColor);
+        text += "\n<color=#" + hexColor + ">Actual number of wounds: <b>" + nWound[index] + "</b></color>";
         return text;
     }
+
+
+    /// <summary> Description of the skill hits and wound generation before the random extraction of the values.</summary>
+    /// <param name="index">Target index.</param>
+    public virtual string InfoBeforeGeneration(int index)
+    {
+        string text = hitsGenerationText + " <b>" + nHits[index] + "</b>\n";
+        text += precisionText + " <b>" + precision[index].ToString("0.#") + "%</b>\n";
+        int expectedHits = Mathf.RoundToInt(precision[index] * 0.01f * nHits[index]);
+        text += "<i>Expected hits on mark: <b>" + expectedHits + "</b></i>\n";
+        text += attackStrengthText + " <b>" + attack[index].ToString("0.##") + "</b>\n";
+        text += defenseText + " <b>" + defense[index].ToString("0.##") + "</b>\n";
+        text += "Damage probability: <b>" + damageProb[index].ToString("0.##") + "</b>\n";
+        text += "<i>Expected number of wounds: <b>" + Mathf.RoundToInt(expectedHits * damageProb[index]) + "</b></i>";
+        return text;
+    }
+
 
     protected abstract string hitsGenerationText { get; }
 

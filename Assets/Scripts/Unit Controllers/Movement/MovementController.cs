@@ -151,10 +151,10 @@ public class MovementController : MonoBehaviour
         {
             movement.movConstructed = false;
             StopAllCoroutines();
-            descPanels.HidePanel(null);
             movement.ResetMovement();
             movActive = false;
         }
+        descPanels.HidePanel(null);
     }
 
 

@@ -40,25 +40,25 @@ public class StatPanel : UnitPanel {
 		myTexts [1].GetComponent<UIInfo> ().title = armyCtrl.army.armyClass.ToString ();
 		myTexts [1].GetComponent<UIInfo> ().infoText = armyCtrl.army.description;
 
-		myTexts [2].text = "<i><b>Movement</b></i>: " + armyCtrl.army.movement.ToString("0.0");
+		myTexts [2].text = "<i><b>Movement</b></i>: " + armyCtrl.army.movement.ToString("0.#");
 		myTexts [2].GetComponent<UIInfo> ().title = "Movement";
 		myTexts [2].GetComponent<UIInfo> ().infoText = "Determines the distance which the unit can cover in a single turn.";
-		myTexts [3].text = "<i><b>Precision</b></i>: " + armyCtrl.army.precision.ToString("0.0");
+		myTexts [3].text = "<i><b>Precision</b></i>: " +armyCtrl.army.precision.ToString("0.#") + "%";
 		myTexts [3].GetComponent<UIInfo> ().title = "Precision";
 		myTexts [3].GetComponent<UIInfo> ().infoText = "Determines the hit probability of physical attacks.";
-		myTexts [4].text = "<i><b>Initiative</b></i>: " + armyCtrl.army.initiative.ToString("0.0");
+		myTexts [4].text = "<i><b>Initiative</b></i>: " + armyCtrl.army.initiative.ToString("0.#");
 		myTexts [4].GetComponent<UIInfo> ().title = "Initiative";
 		myTexts [4].GetComponent<UIInfo> ().infoText = "Determines the army action order in each round.";
-		myTexts [5].text = "<i><b>Phys att</b></i>: " + armyCtrl.army.phAtt.ToString("0.0");
+		myTexts [5].text = "<i><b>Phys att</b></i>: " + armyCtrl.army.phAtt.ToString("0.#");
 		myTexts [5].GetComponent<UIInfo> ().title = "Physical attack";
 		myTexts [5].GetComponent<UIInfo> ().infoText = "Strength of the physical attacks.";
-		myTexts [6].text = "<i><b>Phys def</b></i>: " + armyCtrl.army.phDef.ToString("0.0");
+		myTexts [6].text = "<i><b>Phys def</b></i>: " + armyCtrl.army.phDef.ToString("0.#");
 		myTexts [6].GetComponent<UIInfo> ().title = "Physical defense";
 		myTexts [6].GetComponent<UIInfo> ().infoText = "Defence against the physical attacks.";
-		myTexts [7].text = "<i><b>Ment def</b></i>: " + armyCtrl.army.mentalStrength.ToString("0.0");
+		myTexts [7].text = "<i><b>Ment def</b></i>: " + armyCtrl.army.mentalStrength.ToString("0.#");
 		myTexts [7].GetComponent<UIInfo> ().title = "Mental strength";
 		myTexts [7].GetComponent<UIInfo> ().infoText = "Determines the defense against morale damages and mental attacks. Some skills base their strength on this stat.";
-		myTexts [8].text = "<i><b>Elem def</b></i>: " + armyCtrl.army.elemDef.ToString("0.0");
+		myTexts [8].text = "<i><b>Elem def</b></i>: " + armyCtrl.army.neutralElemDef.ToString("0.#");
 		myTexts [8].GetComponent<UIInfo> ().title = "Elemental defense";
 		myTexts [8].GetComponent<UIInfo> ().infoText = "Defense against elemental attacks.";
 		myTexts [9].text = "<i><b>N attacks</b></i>: " + armyCtrl.army.attNumber;
@@ -68,7 +68,7 @@ public class StatPanel : UnitPanel {
 		myTexts [10].GetComponent<UIInfo> ().title = "Number of wounds";
 		myTexts [10].GetComponent<UIInfo> ().infoText = "Number of wounds of each soldier in the army / number of wounds of the hero.";
 
-		moraleText.text = "Morale: " + (armyCtrl.morale * 100).ToString ("0") + "%";
+		moraleText.text = "Morale: " + (armyCtrl.morale * 100).ToString("0.#") + "%";
 		moraleBar.transform.parent.GetComponent<UIInfo> ().title = "Morale";
 		moraleBar.transform.parent.GetComponent<UIInfo> ().infoText = "Unit morale. If it reaches 0, the units is defeated.";
 		sizeTextr.text = "Soldiers: " + armyCtrl.army.nSoldiers + "/" + armyCtrl.startUnitSize;

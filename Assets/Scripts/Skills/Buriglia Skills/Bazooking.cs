@@ -18,7 +18,7 @@ public class Bazooking : DamageSkill
         inCombat = false;
         name = "Bazooking";
         energyCost = 0;
-        description = "Bazooka distance attack. Each soldier shots a strength <b>" + attackStrength + " <i>physical attack</i></b> ";
+        description = "Bazooka distance attack. Each soldier shots a strength <b>" + attackStrength.ToString("0.##") + " <i>physical attack</i></b> ";
         description += "with a <b><i>precision</i></b> decreasing with the enemy distance. The attack consumes half of the unit <b><i>";
         description += "movement</i></b> and cannot be performed if the unit has consumed more than an half of its movement.";
     }
@@ -103,8 +103,8 @@ public class Bazooking : DamageSkill
     {
         get
         {
-            string text = "Soldier precision: <b>" + caster.army.precision.ToString("0.00") + "</b>\n";
-            text += "Distance precision malus: <b>" + (caster.army.precision - precision[0]).ToString("0.00") + "</b>\n";
+            string text = "Soldier precision: <b>" + caster.army.precision.ToString("0.#") + "%</b>\n";
+            text += "Distance precision malus: <b>" + (caster.army.precision - precision[0]).ToString("0.#") + "%</b>\n";
             return text + "Effective precision:";
         }
     }

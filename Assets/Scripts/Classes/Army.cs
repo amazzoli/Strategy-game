@@ -10,10 +10,10 @@ public class Army : CombatUnit
     public int nSoldiers { get { return soldierList.Count; } }
 
     /// <summary> Number of wounds per soldier </summary>
-    public List<int> soldierList = new List<int>();
+    private List<int> soldierList = new List<int>();
 
     /// <summary> Army class</summary>
-    public Classes armyClass;
+    public Class armyClass;
 
 
     // ARMY METHODS
