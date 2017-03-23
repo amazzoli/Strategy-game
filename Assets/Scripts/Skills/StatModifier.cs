@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 
-public class StatModifier {
+public class StatModifier : IModifierSignal {
 
-	public string title;
+	public string title { get; set; }
 	public int turnsLeft;
     public List<StatModText> mods = new List<StatModText>();
-
+    public string symbolName { get; set; }
 
 	public StatModifier (List<Stat> stats, List<float> values, int nTurns, string title) {
 		this.title = title;
@@ -32,7 +33,7 @@ public class StatModifier {
             foreach (StatModText modText in mods)
                 myText += modText.text + ", ";
             myText = myText.Remove(myText.Length - 2);
-            return myText;
+            return myText + ". " + turnsLeft + " turns left.";
         }
     }
 

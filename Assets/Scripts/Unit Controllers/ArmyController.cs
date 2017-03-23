@@ -14,6 +14,7 @@ public class ArmyController : MonoBehaviour
     // PUBLIC VARIABLES
 
     /// <summary> Player owning the army </summary>
+    [HideInInspector]
     public Player player;
 
     /// <summary> Army morale </summary>
@@ -24,20 +25,23 @@ public class ArmyController : MonoBehaviour
     public Army army;
 
     /// <summary> Class of the hero in the army. </summary>
+    [HideInInspector]
     public CombatUnit hero;
 
+    [HideInInspector]
     /// <summary> Army symbol related to the army class (Sprite for the panels) </summary>
     public Sprite spriteSymbol;
 
     /// <summary> Army symbol related to the army class (Texture for the flag) </summary>
+    [HideInInspector]
     public Texture textureSymbol;
-
-    /// <summary> Symbol for the army engaged </summary>
-    public GameObject battleSymbol;
 
     /// <summary> Body of the army. </summary>
     [HideInInspector]
     public Body body;
+
+    /// <summary> Terrain. </summary>
+    public Terrain currentTerrain = Terrain.none;
 
     /// <summary> Enemies engaged </summary>
     public EnemiesEngaged enemiesEngaged = new EnemiesEngaged();
@@ -51,8 +55,11 @@ public class ArmyController : MonoBehaviour
 
     // PRIVATE VARIABLES
     GameController gc;
-    public TextSpawner textSpawner;
-    StatPanel statPanel;
+    [HideInInspector] public TextSpawner textSpawner;
+    public GameObject battleSymbol;
+    public FlagColors flag;
+    public Transform selection;
+    public StatPanel statPanel;
     ErrorPanel errorPanel;
     ArmyBars bars;
 
@@ -68,8 +75,8 @@ public class ArmyController : MonoBehaviour
         bars = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Spawners").GetComponent<ArmyBars>();
         body = transform.GetChild(0).transform.GetComponent<Body>();
         body.Resize();
-        body.transform.GetComponent<Renderer>().material.mainTexture = player.armyBase;
-        transform.GetChild(5).GetComponent<FlagColors>().SetFlag(textureSymbol);
+        body.transform.GetComponent<Renderer>().material.color = player.color;
+        flag.SetFlag(textureSymbol);
         startUnitSize = army.nSoldiers;
         startEnergy = army.energy;
         if (hero != null) startUnitSize += hero.woundsNumber;
@@ -164,6 +171,7 @@ public class ArmyController : MonoBehaviour
         battleSymbol.SetActive(true);
         battleSymbol.GetComponent<MeshRenderer>().material.renderQueue = 3098;
     }
+
 
     /// <summary> Disengage the specified enemy. </summary>
     public void Disengage(ArmyController enemy)

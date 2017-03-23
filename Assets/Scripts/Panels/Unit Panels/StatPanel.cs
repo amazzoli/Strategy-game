@@ -12,6 +12,7 @@ public class StatPanel : UnitPanel {
 	public RectTransform moraleBar, sizeBar, energyBar;
 	public Text moraleText, sizeTextr, energyText;
 	public Button enlargeButton;
+    public Resources resources;
 
 	float height0 = 145, height1 = 285;
 	float modDistance = 2.5f;
@@ -85,25 +86,41 @@ public class StatPanel : UnitPanel {
 
 	void SetModifiers (ArmyController armyCtrl) {
 		List<StatModifier> mods = armyCtrl.army.statMods;
-		float yButton = modSignal.GetComponent<RectTransform> ().sizeDelta.y;
-		if (mods.Count > 0) {
+        List<PassiveSkill> pskills = armyCtrl.army.passiveSkills;
+
+        float yButton = modSignal.GetComponent<RectTransform> ().sizeDelta.y;
+		if (mods.Count + pskills.Count > 0) {
 			modBar.gameObject.SetActive (true);
-			modBar.sizeDelta = new Vector2 (modBar.sizeDelta.x, modDistance + mods.Count * (modDistance + yButton));
-			for (int i = 0; i < mods.Count; i++) {
-				RectTransform newModSignal = (RectTransform)Instantiate (modSignal, Vector3.zero, Quaternion.identity);
-				newModSignal.transform.SetParent (transform.FindChild("Modifier Bar").transform);
-				newModSignal.anchoredPosition = new Vector2 (0, - modDistance - i * (yButton + modDistance));
-				newModSignal.GetComponent<UIInfo> ().title = mods [i].title;
-				newModSignal.GetComponent<UIInfo> ().infoText = mods [i].description + ". <i>" + mods[i].turnsLeft + "</i> turns left.";
-				modsSignals.Add (newModSignal);
-			}
-		} else {
+			modBar.sizeDelta = new Vector2 (modBar.sizeDelta.x, modDistance + (pskills.Count +  mods.Count) * (modDistance + yButton));
+            int count = 0;
+            for (int i = 0; i < mods.Count; i++)
+            {
+                count++;
+                modsSignals.Add(AddModSignal(yButton, mods[i], i));
+            }
+            for (int k = 0; k < pskills.Count; k++)
+                modsSignals.Add(AddModSignal(yButton, pskills[k], count + k));
+        } else {
 			modBar.gameObject.SetActive (false);
 		}
 	}
 
 
-	void ExpandContract () {
+    RectTransform AddModSignal(float yButton, IModifierSignal mod, int i)
+    {
+        RectTransform newModSignal = (RectTransform)Instantiate(modSignal, Vector3.zero, Quaternion.identity);
+        newModSignal.transform.SetParent(transform.FindChild("Modifier Bar").transform);
+        newModSignal.anchoredPosition = new Vector2(0, -modDistance - i * (yButton + modDistance));
+        newModSignal.GetComponent<UIInfo>().title = mod.title;
+        newModSignal.GetComponent<UIInfo>().infoText = mod.description;
+        Sprite symbol = resources.GetModSprite(mod.symbolName);
+        if (symbol != null) 
+            newModSignal.GetComponent<Image>().sprite = symbol;
+        return newModSignal;
+    }
+
+
+    void ExpandContract () {
 		if (isEnlarged) {
 			isEnlarged = false;
 			GetComponent<RectTransform> ().sizeDelta = new Vector2 (GetComponent<RectTransform> ().sizeDelta.x, height0);

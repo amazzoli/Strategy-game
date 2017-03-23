@@ -81,6 +81,8 @@ public class Shellfighters : Army
         areaPerSoldier = 1;
         skills.Add(new MeleeAttack());
         //elemWeakness.Add(Element.fire);
+        skills.Add(new DazzlingShells());
+        skills.Add(new ExplosiveShells());
     }
 }
 

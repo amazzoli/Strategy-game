@@ -138,7 +138,8 @@ public class CombatUnit
     public Faction faction;
     public List<Element> elemResistence = new List<Element>();
     public List<Element> elemWeakness = new List<Element>();
-    public List<Skill> skills = new List<Skill>();
+    public List<ActiveSkill> skills = new List<ActiveSkill>();
+    public List<PassiveSkill> passiveSkills = new List<PassiveSkill>();
     public List<StatModifier> statMods = new List<StatModifier>();
     public float heightWidthRatio;
     public float areaPerSoldier;

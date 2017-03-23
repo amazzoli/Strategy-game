@@ -1,43 +1,59 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class DeploymentArea : MonoBehaviour {
+public class DeploymentArea : MonoBehaviour
+{
 
     public Player player;
-	public Transform ground;
+    public Material lineMaterial;
+    List<LineRenderer> myLines = new List<LineRenderer>();
 
 
-    void Awake () {
-		//SetShape(ground.localScale.x, ground.localScale.z, player.playerIndex);        
+    void Awake()
+    {     
         transform.name = "Deployment Area Player " + player.index;
-
-		GameController.StartGame += SelfDestruction;
+        GameController.StartGame += SelfDestruction;
     }
 
 
-//	void SetShape(float groundWidth, float groundHeight, int playerIndex) // For a rectangular field, 2 players
-//    {
-//        float deplAreaRatio = 1.0f / 3.0f;
-//        Vector3 size = new Vector3(groundWidth, 1.0f, groundHeight * deplAreaRatio);
-//        transform.localScale = size;
-//        int playerSign = -1;
-//		if (playerIndex == 1)
-//        {
-//            playerSign = 1;
-//            transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
-//        }
-//        transform.position = new Vector3(0.0f, 0.01f, playerSign * (groundHeight - size.z) * 5.0f);
-//    }
-
-
-	public void SetVisible(int playerIndex)
+    public void SetVisible(int playerIndex)
     {
-		if (playerIndex == player.index) {
-			GetComponent<MeshRenderer>().enabled = true;
-			GetComponent<MeshRenderer> ().material.renderQueue = 3090;
-		}
-        else GetComponent<MeshRenderer>().enabled = false;
+        if (playerIndex == player.index)
+        {
+            //GetComponent<MeshRenderer>().material.renderQueue = 3090;
+            DrawLines();
+        }
+        else
+            CancelLines();
     }
 
-    void SelfDestruction() {Destroy(gameObject); }
+
+    void DrawLines()
+    {
+        Vector3 myPos = transform.position;
+        Vector3 northPoint = transform.forward * transform.localScale.z * 5f;
+        Vector3 westPoint = - transform.right * transform.localScale.x * 5f;
+        Vector3 southPoint = - transform.forward * transform.localScale.z * 5f;
+        Vector3 eastPoint = transform.right * transform.localScale.x * 5f;
+        myLines.Add(OtherF.DrawLine(myPos + northPoint + westPoint, myPos + northPoint + eastPoint, lineMaterial, false));
+        myLines.Add(OtherF.DrawLine(myPos + northPoint + eastPoint, myPos + southPoint + eastPoint, lineMaterial, false));
+        myLines.Add(OtherF.DrawLine(myPos + southPoint + eastPoint, myPos + southPoint + westPoint, lineMaterial, false));
+        myLines.Add(OtherF.DrawLine(myPos + southPoint + westPoint, myPos + northPoint + westPoint, lineMaterial, false));
+    }
+
+
+    void CancelLines()
+    {
+        foreach (LineRenderer line in myLines)
+            Destroy(line.gameObject);
+        myLines.Clear();
+    }
+
+
+    void SelfDestruction()
+    {
+        CancelLines();
+        Destroy(gameObject);
+    }
 }

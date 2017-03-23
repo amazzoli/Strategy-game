@@ -34,8 +34,7 @@ public class BubbleCannon : AOEDamageSkill
     protected override void MakeTheAreaMove()
     {
         GameObject fieldOfViewGO = caster.GetComponent<AttackController>().fieldOfViewGO;
-        fieldOfView = new FieldOfView(caster.transform, fieldOfViewGO, 1000, range, false);
-        fieldOfView.DrawArea();
+        fieldOfView = new FieldOfView(caster.transform, fieldOfViewGO, range, false);
         area.field = fieldOfView;
         area.StartMyMovement(UseSkill, x => fieldOfView.IsInFieldOfView(x.transform.position), "Area not in the field of view");
     }
@@ -122,8 +121,7 @@ public class BubbleCannon : AOEDamageSkill
     {
         get
         {
-            string text = "Soldier precision: <b>" + caster.army.precision.ToString("0.#") + "%</b>\n";
-            text += "Distance precision malus: <b>" + (caster.army.precision - precision[0]).ToString("0.#") + "%</b>\n";
+            string text = "Distance precision malus: <b>" + (caster.army.precision - precision[0]).ToString("0.#") + "%</b>\n";
             return text + "Effective precision:";
         }
     }

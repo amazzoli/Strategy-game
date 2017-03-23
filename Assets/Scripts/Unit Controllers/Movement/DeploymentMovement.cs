@@ -8,12 +8,14 @@ public class DeploymentMovement: Movement {
 
 	Vector3 offset;
 	Quaternion objectRotation, offsetRotation;
-	float xMin, xMax, zMin, zMax; // Boudaries  
+	float xMin, xMax, zMin, zMax; // Boudaries 
+    float myY; 
 	bool isRotating = false;
 
 
 	public DeploymentMovement (Transform armyT) {
 		this.armyT = armyT;
+        myY = armyT.position.y;
 		SetBoundaries (FindDeplArea (armyT.GetComponent<ArmyController> ()).transform);
 		movConstructed = true;
 	}
@@ -56,7 +58,7 @@ public class DeploymentMovement: Movement {
 			armyT.rotation = Quaternion.Euler (0, armyT.rotation.eulerAngles.y, 0);
 		} else {
 			Vector3 newPosition = mousePosition - offset;
-			armyT.position = new Vector3(Mathf.Clamp(newPosition.x, xMin, xMax), 0, Mathf.Clamp(newPosition.z, zMin, zMax));
+			armyT.position = new Vector3(Mathf.Clamp(newPosition.x, xMin, xMax), myY, Mathf.Clamp(newPosition.z, zMin, zMax));
 		}
 	}
 

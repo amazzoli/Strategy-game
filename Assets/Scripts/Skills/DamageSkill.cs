@@ -6,7 +6,7 @@ using System.Collections.Generic;
 /// Base class for all the skills that inflict a certain number of hits, with a certain precision and these attacks are 
 /// can be defended by the target with a certain damage probability. Both for single and multi targets.
 /// </summary>
-public abstract class DamageSkill : Skill
+public abstract class DamageSkill : ActiveSkill
 {
     // PUBLIC VARS
 
@@ -72,9 +72,14 @@ public abstract class DamageSkill : Skill
             return;
         }
         ResetTargetChoice();
-        foreach (ArmyController target in targets)
-            target.body.GetComponent<Renderer>().material.color = Color.red;
+
         SetStats();
+        foreach (ArmyController target in targets)
+        {
+            target.body.GetComponent<Renderer>().material.color = Color.red;
+            foreach (PassiveSkill pskill in target.army.passiveSkills)
+                pskill.DamageSkillStatModifier(this, targets.IndexOf(target));
+        }   
         descPanels.damagePanel.MakePanel(this);
     }
 
@@ -95,7 +100,7 @@ public abstract class DamageSkill : Skill
     /// Method called by the damage panel for the random generation of the wounds, applying all the skill effects 
     /// and concluding the skill.
     /// </summary>
-    public void GenerateHitsAndWounds()
+    public virtual void GenerateHitsAndWounds()
     {
         EndSkill();
         for (int i = 0; i < targets.Count; i++)
@@ -103,7 +108,7 @@ public abstract class DamageSkill : Skill
             nHitsOnMarks.Add(BattleF.GetSuccessfulEvents(nHits[i], precision[i] * 0.01f));
             nWound.Add(BattleF.GetSuccessfulEvents(nHitsOnMarks[i], damageProb[i]));
             targets[i].SetWoundDamage(nWound[i], caster, name);
-            targets[i].body.GetComponent<Renderer>().material.color = Color.white;
+            targets[i].body.GetComponent<Renderer>().material.color = targets[i].player.color;
             descPanels.damagePanel.UpdateTextsAfterWounds(this, i);
             if (statMods.Count > 0 && statMods[i] != null)
                 targets[i].AddStatModifier(statMods[i], caster);
@@ -125,7 +130,7 @@ public abstract class DamageSkill : Skill
     {
         base.ResetSkill();
         foreach (ArmyController target in targets)
-            target.body.GetComponent<Renderer>().material.color = Color.white;
+            target.body.GetComponent<Renderer>().material.color = target.player.color;
         ResetTargetChoice();
     }
 
@@ -169,11 +174,13 @@ public abstract class DamageSkill : Skill
         string text = hitsGenerationText + " <b>" + nHits[index] + "</b>\n";
         text += precisionText + " <b>" + precision[index].ToString("0.#") + "%</b>\n";
         int expectedHits = Mathf.RoundToInt(precision[index] * 0.01f * nHits[index]);
-        text += "<i>Expected hits on mark: <b>" + expectedHits + "</b></i>\n";
+        text += "<i>Expected hits on mark: <b>" + expectedHits + "</b></i>\n\n";
         text += attackStrengthText + " <b>" + attack[index].ToString("0.##") + "</b>\n";
         text += defenseText + " <b>" + defense[index].ToString("0.##") + "</b>\n";
         text += "Damage probability: <b>" + damageProb[index].ToString("0.##") + "</b>\n";
         text += "<i>Expected number of wounds: <b>" + Mathf.RoundToInt(expectedHits * damageProb[index]) + "</b></i>";
+        foreach (PassiveSkill pskill in targets[index].army.passiveSkills)
+            text += pskill.DamageSkillStatModText(this, index);
         return text;
     }
 

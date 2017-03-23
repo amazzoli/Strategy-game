@@ -44,7 +44,7 @@ public class ActionPanel : UnitPanel
         else
             buttonCount += SetStandardInCombatButtons(armyCtrl);
 
-        foreach (Skill skill in armyCtrl.army.skills)
+        foreach (ActiveSkill skill in armyCtrl.army.skills)
         {
             if ((skill.atDistance && outOfCombat) || (skill.inCombat && !outOfCombat))
             {

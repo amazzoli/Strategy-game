@@ -23,6 +23,7 @@ public class MovementController : MonoBehaviour
     ActionPanel actionPanel;
     DescPanels descPanels;
     int nOverlapsOnMe = 0;
+    List<string> allowedColliderTags = new List<string>() { "Aux Collider", "AOEArea", "Wood", "Inner Collider" };
 
 
     void Awake()
@@ -141,6 +142,7 @@ public class MovementController : MonoBehaviour
             movement.StopMovement();
             canCharge = false;
             actionPanel.MakePanel(armyCtrl);
+            //Camera.main.GetComponent<CameraMover>().ArmyAlignment(armyCtrl);
         }
     }
 
@@ -160,7 +162,7 @@ public class MovementController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag != "Aux Collider" && other.tag != "AOEArea")
+        if (!allowedColliderTags.Contains(other.tag))
         {
             nOverlaps++;
             nOverlapsOnMe++;
@@ -171,7 +173,7 @@ public class MovementController : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.tag != "Aux Collider" && other.tag != "AOEArea")
+        if (!allowedColliderTags.Contains(other.tag))
         {
             nOverlaps--;
             nOverlapsOnMe--;

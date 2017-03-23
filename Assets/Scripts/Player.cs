@@ -7,7 +7,7 @@ public class Player : MonoBehaviour {
 	//public string faction;
 	public string playerName;
 	public Color color;
-	public Texture armyBase;
+	//public Texture armyBase;
 
 
 }

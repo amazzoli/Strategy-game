@@ -10,7 +10,7 @@ public class Bazooking : DamageSkill
     float attackStrength = 4;
     List<ArmyController> enemiesInSight;
     FieldOfView fieldOfView;
-
+    float precisionReductionByDistance;
 
     public Bazooking()
     {
@@ -27,8 +27,7 @@ public class Bazooking : DamageSkill
     protected override void TargetChoice()
     {
         GameObject fieldOfViewGO = caster.GetComponent<AttackController>().fieldOfViewGO;
-        fieldOfView = new FieldOfView(caster.transform, fieldOfViewGO, 1000, range, false);
-        fieldOfView.DrawArea();
+        fieldOfView = new FieldOfView(caster.transform, fieldOfViewGO, range, false);
 
         enemiesInSight = new List<ArmyController>();
         foreach (InSightArmy army in fieldOfView.armiesInSight)
@@ -56,7 +55,8 @@ public class Bazooking : DamageSkill
     {
         nHits.Add(caster.army.nSoldiers * Mathf.RoundToInt(caster.army.attNumber));
         float distance = Vector3.Distance(caster.transform.position, targets[0].transform.position) - (caster.body.length + targets[0].body.length) / 2.0f;
-        precision.Add(BattleF.ComputePrecision(caster.army.precision, distance));
+        precisionReductionByDistance = caster.army.precision - BattleF.ComputePrecision(caster.army.precision, distance);
+        precision.Add(caster.army.precision - precisionReductionByDistance);
         attack.Add(attackStrength);
         defense.Add(targets[0].army.phDef);
         damageProb.Add(BattleF.GetHitProbability(attack[0], targets[0].army.phDef));
@@ -103,8 +103,7 @@ public class Bazooking : DamageSkill
     {
         get
         {
-            string text = "Soldier precision: <b>" + caster.army.precision.ToString("0.#") + "%</b>\n";
-            text += "Distance precision malus: <b>" + (caster.army.precision - precision[0]).ToString("0.#") + "%</b>\n";
+            string text = "Distance precision malus: <b>" + precisionReductionByDistance.ToString("0.#") + "%</b>\n";
             return text + "Effective precision:";
         }
     }

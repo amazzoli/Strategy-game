@@ -63,8 +63,7 @@ public class AttackController : MonoBehaviour
     void CastFieldOfView()
     {
         float movement = armyCtrl.transform.GetChild(0).GetComponent<MovementController>().movementLeft;
-        fieldOfView = new FieldOfView(armyCtrl.transform, fieldOfViewGO, 1000, movement + armyCtrl.body.length / 2.0f, true);
-        fieldOfView.DrawArea();
+        fieldOfView = new FieldOfView(armyCtrl.transform, fieldOfViewGO, movement + armyCtrl.body.length / 2.0f, true);
         attackCoroutine = StartCoroutine(AttackCoroutine());
 
         actionPanel = GameObject.FindGameObjectWithTag("Action Panel").GetComponent<ActionPanel>();
@@ -140,12 +139,13 @@ public class AttackController : MonoBehaviour
         };
         foreach (ArmyController engagedEnemy in defender.enemiesEngaged.list)
             allowedObstacles.Add(engagedEnemy.body.gameObject);
+        List<string> allowedObstaclesByTag = new List<string> { "Wood" };
 
         foreach (Collider collider in auxCollider.collidersInsideMe)
-            if (!allowedObstacles.Contains(collider.gameObject))
-                obstacles.Add(collider.gameObject);
+            if (!allowedObstacles.Contains(collider.gameObject) && !allowedObstaclesByTag.Contains(collider.tag))
+                    obstacles.Add(collider.gameObject);
         foreach (Collider collider in enemyCollider.collidersInsideMe)
-            if (!allowedObstacles.Contains(collider.gameObject) && !obstacles.Contains(collider.gameObject))
+            if (!allowedObstacles.Contains(collider.gameObject) && !allowedObstaclesByTag.Contains(collider.tag) && !obstacles.Contains(collider.gameObject))
                 obstacles.Add(collider.gameObject);
 
         if (obstacles.Count > 0)
@@ -168,18 +168,28 @@ public class AttackController : MonoBehaviour
         DeleteFieldOfView();
         armyCtrl.Engage(defender, side);
 
-        if (side == Directions.east || side == Directions.west)
-            defender.SetMoraleDamage(BattleF.moraleDmgLateralAttack, armyCtrl, "Lateral attack");
+        // Checking if there is a defender passive skill that modifies the attack effect
+        bool[] modByPSkill = new bool[3];
+        foreach (PassiveSkill pskill in defender.army.passiveSkills)
+        {
+            bool[] auxModByPSkill = pskill.ModifyAttack(this);
+            for (int i=0; i<3; i++)
+                if (auxModByPSkill[i])
+                    modByPSkill[i] = true;
+        }
 
-        if (side == Directions.south)
+        if (side == Directions.east || side == Directions.west)
+            if (!modByPSkill[0])
+                defender.SetMoraleDamage(BattleF.moraleDmgLateralAttack, armyCtrl, "Lateral attack");
+
+        if (side == Directions.south && !modByPSkill[1])
             defender.SetMoraleDamage(BattleF.moraleDmgBackAttack, armyCtrl, "Back attack");
 
-        if (charging)
+        if (charging && !modByPSkill[2])
         {
             armyCtrl.AddStatModifier(Stat.phAtt, 1, 1, "Charge", armyCtrl);
             defender.SetMoraleDamage(BattleF.moraleDmgCharge, armyCtrl, "Charge");
         }
-        //GameController.battleLog.Add(new ChargeActionLog(armyCtrl, charging, defender, side, chargeDamage, sideDamage));
         actionPanel.MakePanel(armyCtrl);
     }
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 
 public static class OtherF
@@ -27,6 +28,25 @@ public static class OtherF
 
         string z = a + b + c + d + e + f;
         return z;
+    }
+
+
+    public static LineRenderer DrawLine(Vector3 start, Vector3 end, Material lineMaterial, bool areaLayer)
+    {
+        GameObject myLine = new GameObject();
+        myLine.transform.position = start;
+        myLine.AddComponent<LineRenderer>();
+        LineRenderer lr = myLine.GetComponent<LineRenderer>();
+        lr.material = lineMaterial;
+        //lr.startColor = color;
+        //lr.endColor = color;
+        lr.startWidth = 0.2f;
+        lr.endWidth = 0.2f;
+        lr.SetPosition(0, start);
+        lr.SetPosition(1, end);
+        if (areaLayer)
+            myLine.layer = 9;
+        return lr;
     }
 }
 

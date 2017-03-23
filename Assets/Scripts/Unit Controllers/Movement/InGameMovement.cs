@@ -19,8 +19,11 @@ public class InGameMovement : Movement
     /// <summary>Movimento compiuto per rotazione</summary>
     protected float rotationMov;
 
-    /// <summary>Movimento compiuto per avanzamento</summary>
+    /// <summary>Movimento compiuto per avanzamento (no terrain penalities)</summary>
     protected float straightMov;
+
+    /// <summary>Movimento compiuto per avanzamento in bosco</summary>
+    protected float movInWood;
 
     /// <summary>Diagonale dell'armata</summary>
     protected float diagonal;
@@ -31,8 +34,7 @@ public class InGameMovement : Movement
     /// <summary>Overall friction during the movement. Friction = 2 means that the movement depletes two times faster</summary>
     protected float friction;
 
-    // Testi vari usati nel description panel
-    protected Text rotMovText, strMovText, movLeftText, movDone;
+    MovPanel movPanel;
 
     protected Body armyBody;
 
@@ -43,17 +45,15 @@ public class InGameMovement : Movement
         armyT = armyCtrl.transform;
         this.armyAreaAngle = armyAreaAngle;
         this.friction = friction;
-        movArea = new MovementArea(armyCtrl.transform, movAreaGO, 500, movement / friction, angleOfView, armyAreaAngle);
-        movArea.DrawArea();
+        movArea = new MovementArea(armyCtrl.transform, movAreaGO, movement / friction, angleOfView, armyAreaAngle);
         armyCtrl.transform.FindChild("Cylinder").gameObject.SetActive(true);
         startPosition = armyT.position;
         startForward = armyT.forward;
         armyBody = armyT.GetChild(0).GetComponent<Body>();
         diagonal = Mathf.Sqrt(Mathf.Pow(armyBody.width, 2) + Mathf.Pow(armyBody.length, 2));
 
-        MovPanel movPanel = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Description Panels").GetChild(0).GetComponent<MovPanel>();
+        movPanel = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("Description Panels").GetChild(0).GetComponent<MovPanel>();
         movPanel.MakePanel(movement);
-        SetTexts(movPanel);
 
         movConstructed = true;
     }
@@ -78,6 +78,7 @@ public class InGameMovement : Movement
 
         float angle = (GeomF.YAngleWithSign(startForward, mousePosition - startPosition) + 360 - armyAreaAngle) % 360; // Angle between mouse and mov area
         straightMov = Vector3.Distance(startPosition, mousePosition);
+        movInWood = movArea.MovementDoneInWood(angle, straightMov);
         rotationMov = BattleF.RotationMovement(angle, diagonal);
 
         if (straightMov <= movArea.GetMovAreaRadius(angle)) // Mouse inside the movement area
@@ -100,10 +101,11 @@ public class InGameMovement : Movement
             armyT.rotation = lookAtAngle * Quaternion.LookRotation(startForward);
             armyT.position = movArea.GetMovAreaBoundary(angle);
             straightMov = movArea.GetMovAreaRadius(angle);
-            rotationMov = BattleF.RotationMovement(angle, diagonal);           
+            movInWood = movArea.MovementDoneInWood(angle, straightMov);
+            //rotationMov = BattleF.RotationMovement(angle, diagonal);           
         }
 
-        SetMovDoneText(rotationMov, straightMov, movement);
+        movPanel.SetTexts(movement, rotationMov, straightMov, movInWood, friction);
         armyT.rotation = Quaternion.Euler(0, armyT.rotation.eulerAngles.y, 0);
     }
 
@@ -112,7 +114,7 @@ public class InGameMovement : Movement
     {
         movArea.DestroyArea();
         armyT.GetComponent<ArmyController>().transform.FindChild("Cylinder").gameObject.SetActive(false);
-        SetMovDoneText(0, 0, GetMovementLeft());
+        movPanel.MakePanel(GetMovementLeft());
         UpdateArmyCollider(0);
         movConstructed = false;
     }
@@ -120,7 +122,10 @@ public class InGameMovement : Movement
 
     public override float GetMovementLeft()
     {
-        return movement - friction * (rotationMov + straightMov);
+        float movLeft = movement - friction * (rotationMov + straightMov + movInWood);
+        if (movLeft < 0)
+            movLeft = 0;
+        return movLeft;
     }
 
 
@@ -131,7 +136,7 @@ public class InGameMovement : Movement
         armyT.position = startPosition;
         armyT.rotation = Quaternion.LookRotation(startForward);
         armyT.rotation = Quaternion.Euler(0, armyT.rotation.eulerAngles.y, 0);
-        SetMovDoneText(0, 0, movement);
+        movPanel.MakePanel(movement);
         UpdateArmyCollider(0);
 
     }
@@ -150,35 +155,6 @@ public class InGameMovement : Movement
         {
             armyCollider.size = new Vector3(1, 1, 1);
             armyCollider.center = Vector3.zero;
-        }
-    }
-
-
-    protected virtual void SetTexts(MovPanel panel)
-    {
-        strMovText = panel.straightMov;
-        rotMovText = panel.rotationMov;
-        movDone = panel.movDone;
-        movLeftText = panel.movLeft;
-    }
-
-
-    protected void SetMovDoneText(float rotationMov, float straightMov, float movLeft)
-    {
-        if (movLeft <= 0) movLeft = 0;
-        if (friction != 1f)
-        {
-            rotMovText.text = "Rotation movement done = " + friction.ToString("0.0") + "*" + rotationMov.ToString("0.0");
-            strMovText.text = "Straight movement done = " + friction.ToString("0.0") + "*" + straightMov.ToString("0.0");
-            movDone.text = "Total movement done = " + (friction * (rotationMov + straightMov)).ToString("0.0");
-            movLeftText.text = "Movement left = " + movLeft.ToString("0.0");
-        }
-        else
-        {
-            rotMovText.text = "Rotation movement done = " + rotationMov.ToString("0.0");
-            strMovText.text = "Straight movement done = " + straightMov.ToString("0.0");
-            movDone.text = "Total movement done = " + (rotationMov + straightMov).ToString("0.0");
-            movLeftText.text = "Movement left = " + movLeft.ToString("0.0");
         }
     }
 }

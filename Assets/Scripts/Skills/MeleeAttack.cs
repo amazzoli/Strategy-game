@@ -41,7 +41,7 @@ public class MeleeAttack : DamageSkill
         precision.Add(caster.army.precision);
         attack.Add(caster.army.phAtt);
         defense.Add(targets[0].army.phDef);
-        damageProb.Add(BattleF.GetHitProbability(caster.army.phAtt, targets[0].army.phDef));
+        damageProb.Add(BattleF.GetHitProbability(attack[0], defense[0]));
     }
 
 

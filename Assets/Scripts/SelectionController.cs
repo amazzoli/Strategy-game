@@ -36,7 +36,7 @@ public class SelectionController : MonoBehaviour {
 		if (!GameController.actionInProg) {
 			ArmyDeselection (currentSelected);
 			ArmySelection (armyCtrl);
-			armyCtrl.transform.FindChild ("Selection").GetComponent<SelectionResizer> ().ShowSelectionDraw ();
+            armyCtrl.selection.gameObject.SetActive(true);
 			currentSelected = armyCtrl;
 		}
     }
@@ -44,7 +44,7 @@ public class SelectionController : MonoBehaviour {
 
 	void UnsetSelection(ArmyController armyCtrl) {
 		if (currentSelected == armyCtrl && armyCtrl != null) {
-			armyCtrl.transform.FindChild ("Selection").GetComponent<SelectionResizer> ().HideSelectionDraw ();
+            armyCtrl.selection.gameObject.SetActive(false);
             currentSelected = null;
         }
     }

@@ -120,7 +120,7 @@ public class DamagePanel : MonoBehaviour {
         Button newWoundButt = Instantiate(generateHitsWounds, Vector3.zero, Quaternion.identity);
         newWoundButt.transform.SetParent(this.transform);
         newWoundButt.GetComponent<RectTransform>().anchoredPosition = new Vector2(xButton, -y);
-        newWoundButt.GetComponent<UIInfo>().title = "Generation of hits and wounds on " + skill.targets[rowIndex].army.unitName;
+        newWoundButt.GetComponent<UIInfo>().title = skill.name + " on " + skill.targets[rowIndex].army.unitName;
         newWoundButt.GetComponent<UIInfo>().infoText = skill.InfoBeforeGeneration(rowIndex);
         hitsWoundsButtons.Add(newWoundButt);
     }

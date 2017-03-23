@@ -30,6 +30,10 @@ public enum Element
 {
     fire, water, cazziemazzi
 }
+public enum Terrain
+{
+    wood, none
+}
 
 
 // Unit related

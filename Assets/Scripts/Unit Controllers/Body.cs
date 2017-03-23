@@ -62,7 +62,7 @@ public class Body : MonoBehaviour
     {
         if (markedAsAttackable)
         {
-            GetComponent<Renderer>().material.color = Color.white;
+            GetComponent<Renderer>().material.color = armyCtrl.player.color;
             if (drawLines)
                 CancelLines();
         }
@@ -80,12 +80,11 @@ public class Body : MonoBehaviour
     {
         if (armyCtrl == null)
             armyCtrl = transform.parent.GetComponent<ArmyController>();
-        Transform battleSymbol = armyCtrl.transform.GetChild(4);
-        Transform flag = armyCtrl.transform.GetChild(5).transform;
+        Transform flag = armyCtrl.flag.transform;
         Vector2 armySize = BattleF.GetArmySize(armyCtrl.army.nSoldiers, armyCtrl.army.areaPerSoldier, armyCtrl.army.heightWidthRatio);
-        battleSymbol.localPosition = new Vector3(0, 0.05f, armySize[1] * 0.6f);
+        armyCtrl.battleSymbol.transform.localPosition = new Vector3(0, 0.91f, armySize[1] * 0.6f);
         flag.localPosition = new Vector3(0, flag.localPosition.y, armySize[1] * 3.0f / 8.0f);
-        transform.localScale = new Vector3(armySize[0], armySize[1], 1);
+        transform.localScale = new Vector3(armySize[0], armySize[1], transform.localScale.z);
     }
 
 
@@ -134,7 +133,7 @@ public class Body : MonoBehaviour
     public void MarkAsOverlapped() { GetComponent<Renderer>().material.color = Color.red; }
 
 
-    public void UnmarkAsOverlapped() { GetComponent<Renderer>().material.color = Color.white; }
+    public void UnmarkAsOverlapped() { GetComponent<Renderer>().material.color = armyCtrl.player.color; }
 
 
     public void MarkAsAttackable(ArmyController enemy, ArmyControllerDlg attackAction, bool drawLines)
@@ -148,7 +147,7 @@ public class Body : MonoBehaviour
 
     public void UnmarkAsAttackable()
     {
-        GetComponent<Renderer>().material.color = Color.white;
+        GetComponent<Renderer>().material.color = armyCtrl.player.color;
         markedAsAttackable = false;
         CancelLines();
     }
@@ -166,10 +165,10 @@ public class Body : MonoBehaviour
         Vector3 endPoint3 = corner3 + lineLength * (armyCtrl.transform.forward - armyCtrl.transform.right).normalized;
         Vector3 endPoint4 = corner4 + lineLength * (-armyCtrl.transform.forward - armyCtrl.transform.right).normalized;
 
-        linesDuringAttack.Add(DrawLine(corner1, endPoint1, Color.white));
-        linesDuringAttack.Add(DrawLine(corner2, endPoint2, Color.white));
-        linesDuringAttack.Add(DrawLine(corner3, endPoint3, Color.white));
-        linesDuringAttack.Add(DrawLine(corner4, endPoint4, Color.white));
+        linesDuringAttack.Add(OtherF.DrawLine(corner1, endPoint1, lineMaterial, true));
+        linesDuringAttack.Add(OtherF.DrawLine(corner2, endPoint2, lineMaterial, true));
+        linesDuringAttack.Add(OtherF.DrawLine(corner3, endPoint3, lineMaterial, true));
+        linesDuringAttack.Add(OtherF.DrawLine(corner4, endPoint4, lineMaterial, true));
     }
 
 
@@ -178,22 +177,5 @@ public class Body : MonoBehaviour
         foreach (LineRenderer line in linesDuringAttack)
             Destroy(line.gameObject);
         linesDuringAttack.Clear();
-    }
-
-
-    LineRenderer DrawLine(Vector3 start, Vector3 end, Color color)
-    {
-        GameObject myLine = new GameObject();
-        myLine.transform.position = start;
-        myLine.AddComponent<LineRenderer>();
-        LineRenderer lr = myLine.GetComponent<LineRenderer>();
-        lr.material = lineMaterial;
-        lr.startColor = color;
-        lr.endColor = color;
-        lr.startWidth = 0.2f;
-        lr.endWidth = 0.2f;
-        lr.SetPosition(0, start);
-        lr.SetPosition(1, end);
-        return lr;
     }
 }
